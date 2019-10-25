@@ -1,0 +1,261 @@
+{
+	"info": {
+		"_postman_id": "57eb5233-2683-4b29-a52b-35234b1454b4",
+		"name": "Plan-Net Client Queries",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "InsurancePlans - all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://davinci-plan-net-ri.logicahealth.org/fhir/InsurancePlan",
+					"protocol": "https",
+					"host": [
+						"davinci-plan-net-ri",
+						"logicahealth",
+						"org"
+					],
+					"path": [
+						"fhir",
+						"InsurancePlan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "InsurancePlans - by name",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://davinci-plan-net-ri.logicahealth.org/fhir/InsurancePlan?name:contains=green circle",
+					"protocol": "https",
+					"host": [
+						"davinci-plan-net-ri",
+						"logicahealth",
+						"org"
+					],
+					"path": [
+						"fhir",
+						"InsurancePlan"
+					],
+					"query": [
+						{
+							"key": "name:contains",
+							"value": "green circle"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Networks in CT",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://davinci-plan-net-ri.logicahealth.org/fhir/Organization?address:contains=CT&_profile=http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/plannet-Network",
+					"protocol": "https",
+					"host": [
+						"davinci-plan-net-ri",
+						"logicahealth",
+						"org"
+					],
+					"path": [
+						"fhir",
+						"Organization"
+					],
+					"query": [
+						{
+							"key": "name:contains",
+							"value": "acme",
+							"disabled": true
+						},
+						{
+							"key": "address:contains",
+							"value": "CT"
+						},
+						{
+							"key": "_profile",
+							"value": "http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/plannet-Network"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Payers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://davinci-plan-net-ri.logicahealth.org/fhir/Organization?type=pay",
+					"protocol": "https",
+					"host": [
+						"davinci-plan-net-ri",
+						"logicahealth",
+						"org"
+					],
+					"path": [
+						"fhir",
+						"Organization"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "pay"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Networks associated with a payer (by name) in a State(by name)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://davinci-plan-net-ri.logicahealth.org/fhir/Organization?_profile=http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/plannet-Network&partof.name:contains=Acme&address:contains=CT",
+					"protocol": "https",
+					"host": [
+						"davinci-plan-net-ri",
+						"logicahealth",
+						"org"
+					],
+					"path": [
+						"fhir",
+						"Organization"
+					],
+					"query": [
+						{
+							"key": "address:contains",
+							"value": "RI",
+							"disabled": true
+						},
+						{
+							"key": "_profile",
+							"value": "http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/plannet-Network"
+						},
+						{
+							"key": "partof.name:contains",
+							"value": "Acme"
+						},
+						{
+							"key": "address:contains",
+							"value": "CT"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Pharmacies (by name) Associated with a Network in a zipcode",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://davinci-plan-net-ri.logicahealth.org/fhir/Location?_has:OrganizationAffiliation:location:network=Organization/plannet-network-HPID010000&type=OUTPHARM&name:contains=CVS&address:contains=06042",
+					"protocol": "https",
+					"host": [
+						"davinci-plan-net-ri",
+						"logicahealth",
+						"org"
+					],
+					"path": [
+						"fhir",
+						"Location"
+					],
+					"query": [
+						{
+							"key": "_has:OrganizationAffiliation:location:network",
+							"value": "Organization/plannet-network-HPID010000"
+						},
+						{
+							"key": "type",
+							"value": "OUTPHARM"
+						},
+						{
+							"key": "name:contains",
+							"value": "CVS"
+						},
+						{
+							"key": "address:contains",
+							"value": "06042"
+						},
+						{
+							"key": "_has:OrganizationAffiliation:location:network:name",
+							"value": "Acme",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pharmacies via OrgAffiliation",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Practitioner by Specialty within a Network",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://davinci-plan-net-ri.logicahealth.org/fhir/Practitioner?_has:PractitionerRole:practitioner:network=Organization/plannet-network-HPID010000&qualification-code=103T00000X&address-state=MA",
+					"protocol": "https",
+					"host": [
+						"davinci-plan-net-ri",
+						"logicahealth",
+						"org"
+					],
+					"path": [
+						"fhir",
+						"Practitioner"
+					],
+					"query": [
+						{
+							"key": "_has:PractitionerRole:practitioner:network",
+							"value": "Organization/plannet-network-HPID010000"
+						},
+						{
+							"key": "qualification-code",
+							"value": "103T00000X"
+						},
+						{
+							"key": "address-state",
+							"value": "MA"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PractitionerRoles by Specialty within a network",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		}
+	]
+}

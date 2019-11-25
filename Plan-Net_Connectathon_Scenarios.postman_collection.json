@@ -1,0 +1,1275 @@
+{
+	"info": {
+		"_postman_id": "5aef1a3d-e247-47ab-9b76-d95bbeab5c80",
+		"name": "Payer Directory Connectathon Scenarios",
+		"description": "Sample data load to wildFHIR",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Scenario 1: Request data on a particular Practitioner",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c07e7aa2-869b-41ae-9c14-4bad7f1a8574",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"// print out the step count to the console",
+							"if (responseCode.code === 200){",
+							"    ",
+							"        try{",
+							"            var dr_data = JSON.parse(responseBody),",
+							"            r_data = dr_data.entry[0].resource,",
+							"            pract = r_data.name[0].given[0] + \" \" + r_data.name[0].family;",
+							"            quals = r_data.qualification;",
+							"            qual_length=quals.length;",
+							"",
+							"        }",
+							"        catch(e){",
+							"            console.log(e);",
+							"        }",
+							"",
+							"        tests[\"Practitioner=\"  +  pract ] = true;",
+							"        for (var i = 0; i < qual_length; i++) {",
+							"            tests[ \"Qualifications:\"  + quals[i].code.coding[0].display + \" in \" + quals[i].extension[0].extension[1].valueCodeableConcept.text] = true;",
+							"            //qual_text = qual_text + \"quals[i].code.coding[0].display\"  + \"\\n\";",
+							"            //Do something",
+							"        }",
+							"    ",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/fhir+xml",
+						"description": "FHIR xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/fhir+xml",
+						"description": "FHIR xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "application/fhir+json",
+						"description": "FHIR json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/fhir+json",
+						"description": "FHIR json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/Practitioner?identifier=1236246543",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Practitioner"
+					],
+					"query": [
+						{
+							"key": "identifier",
+							"value": "1236246543"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 2a: Request data on Practitioners with an address in Rhode Island",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9efae177-a382-478b-ac42-888436fecc33",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"// print out the step count to the console",
+							"if (responseCode.code === 200){",
+							"    ",
+							"        try{",
+							"            var dr_data = JSON.parse(responseBody);",
+							"            var data_entry = dr_data.entry;",
+							"            var data_entry_len = data_entry.length;",
+							"            ",
+							"            tests[dr_data.total + \" Practitioners in CT\"] = true;",
+							"            var p_name = \"including:\";",
+							"            for (i = 0; i < data_entry_len; i++){",
+							"            var p_name  = p_name +  \", \" + data_entry[i].resource.name[0].given[0] + \" \" + data_entry[i].resource.name[0].family;",
+							"            //var p_sname  = data_entry[i].resource.name[0];",
+							"            }",
+							"            tests[p_name] = true;",
+							"            ",
+							"",
+							"        }",
+							"        catch(e){",
+							"            console.log(e);",
+							"            }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/fhir+xml",
+						"description": "FHIR xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/fhir+xml",
+						"description": "FHIR xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "application/fhir+json",
+						"description": "FHIR json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/fhir+json",
+						"description": "FHIR json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/Practitioner?address-state=RI",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Practitioner"
+					],
+					"query": [
+						{
+							"key": "address-state",
+							"value": "RI"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 2b: Request data on any Practitioners who have a qualification in CT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "33643ec1-9ba1-4659-ba40-ea1e58686fe5",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"// print out the step count to the console",
+							"if (responseCode.code === 200){",
+							"    ",
+							"        try{",
+							"            var dr_data = JSON.parse(responseBody);",
+							"            var data_entry = dr_data.entry;",
+							"            var data_entry_len = data_entry.length;",
+							"            ",
+							"            tests[dr_data.total + \" Practitioners qualified in CT\"] = true;",
+							"            var p_name = \"including:\";",
+							"            for (i = 0; i < data_entry_len; i++){",
+							"                ",
+							"                var p_name  = p_name +  \", \" + data_entry[i].resource.name[0].family + \" \" + data_entry[i].resource.name[0].family;",
+							"                quals = data_entry[i].resource.qualification;",
+							"                qual_length=quals.length;",
+							"            ",
+							"                var qual_string = \"...qualification states : \";",
+							"                ",
+							"                    for (var j = 0; j < qual_length; j++) {",
+							"                    qual_string = qual_string + \"/\" + quals[j].extension[0].extension[1].valueCodeableConcept.text ;",
+							"                    }",
+							"              p_name = p_name + qual_string;  ",
+							"            }",
+							"            tests[p_name + \"   \"] = true;",
+							"            ",
+							"",
+							"        }",
+							"        catch(e){",
+							"            console.log(e);",
+							"            }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/fhir+xml",
+						"description": "FHIR xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/fhir+xml",
+						"description": "FHIR xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "application/fhir+json",
+						"description": "FHIR json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/fhir+json",
+						"description": "FHIR json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/Practitioner?qualification-wherevalid-code=CT",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Practitioner"
+					],
+					"query": [
+						{
+							"key": "qualification-wherevalid-code",
+							"value": "CT",
+							"description": "Or any practitioners who have a qualification (e.g. license) where the qualification is valid is in the state of CT (Connecticut)."
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 3: Request data on an individual Organization",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c695a13a-f6e0-4417-9420-4035118047b3",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"// print out the step count to the console",
+							"if (responseCode.code === 200){",
+							"    ",
+							"        try{",
+							"            var dr_data = JSON.parse(responseBody);",
+							"            var data_entry = dr_data.entry;",
+							"            var data_entry_len = data_entry.length;",
+							"            var hcs = [];",
+							"            for (i = 0; i < data_entry_len; i++){",
+							"                if (data_entry[i].resource.resourceType == \"Organization\"){",
+							"                   var o_name  = \"Organization: \" + data_entry[i].resource.name; ",
+							"                }",
+							"                else if (data_entry[i].resource.resourceType == \"Location\"){",
+							"                    var l_name  = \"Location: \" + data_entry[i].resource.description; ",
+							"                }",
+							"                else if (data_entry[i].resource.resourceType == \"HealthcareService\"){",
+							"                    hcs.push(data_entry[i].resource.name);",
+							"                }",
+							"                }",
+							"               ",
+							"            tests[\"Organization:\" + o_name] = true;",
+							"            tests[\"Location:\" + l_name] = true;",
+							"            tests[\"HealthcareServices:\" + hcs.join(', ')] = true;",
+							"",
+							"            ",
+							"            ",
+							"",
+							"        }",
+							"        catch(e){",
+							"            console.log(e);",
+							"            }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/fhir+xml",
+						"description": "FHIR xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/fhir+xml",
+						"description": "FHIR xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "application/fhir+json",
+						"description": "FHIR json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/fhir+json",
+						"description": "FHIR json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/Organization?name=GREATER LAWRENCE FAMILY HEALTH CENTER, INC.&_revinclude=Location:organization&_revinclude=HealthcareService:organization&_revinclude=Endpoint:organization",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Organization"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "GREATER LAWRENCE FAMILY HEALTH CENTER, INC."
+						},
+						{
+							"key": "_revinclude",
+							"value": "Location:organization"
+						},
+						{
+							"key": "_revinclude",
+							"value": "HealthcareService:organization"
+						},
+						{
+							"key": "_revinclude",
+							"value": "Endpoint:organization"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 4: Request data on Organizations",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b0f639ca-80a4-489a-b085-d952c32c54c1",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"// print out the step count to the console",
+							"if (responseCode.code === 200){",
+							"    ",
+							"        try{",
+							"            var dr_data = JSON.parse(responseBody);",
+							"            var data_entry = dr_data.entry;",
+							"            var data_entry_len = data_entry.length;",
+							"            var hcs = [];",
+							"            var oa = [];",
+							"            for (i = 0; i < data_entry_len; i++){",
+							"                if (data_entry[i].resource.resourceType == \"Organization\"){",
+							"                   var o_name  = \"Organization: \" + data_entry[i].resource.name; ",
+							"                }",
+							"                else if (data_entry[i].resource.resourceType == \"Location\"){",
+							"                    var l_name  = \"Location: \" + data_entry[i].resource.description; ",
+							"                }",
+							"                else if (data_entry[i].resource.resourceType == \"HealthcareService\"){",
+							"                    hcs.push(\"HealthcareService: \" + data_entry[i].resource.name);",
+							"                }",
+							"                else if (data_entry[i].resource.resourceType == \"OrganizationAffiliation\"){",
+							"                    oa.push(data_entry[i].resource.organization.reference.slice(13));",
+							"                }",
+							"                }",
+							"               ",
+							"            tests[\"Organization:\" + o_name] = true;",
+							"            ///tests[\"Location:\" + l_name] = true;",
+							"            //tests[\"HealthcareServices:\" + hcs.toString()] = true;",
+							"            tests[\"OrganizationAffiliations:\" + oa.toString()] = true;",
+							"            ",
+							"            //set variables for the next query",
+							"            ",
+							"            pm.environment.set(\"org_affiliations\",oa.toString());",
+							"            ",
+							"",
+							"            ",
+							"            ",
+							"",
+							"        }",
+							"        catch(e){",
+							"            console.log(e);",
+							"            }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/fhir+xml",
+						"description": "FHIR xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/fhir+xml",
+						"description": "FHIR xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "application/fhir+json",
+						"description": "FHIR json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/fhir+json",
+						"description": "FHIR json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/Organization?name=BAY STATE COMMUNITY SERVICES, INC.&_revinclude=OrganizationAffiliation:participating-organization&_revinclude=Endpoint:organization&_revinclude=HealthcareService:organization",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Organization"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "BAY STATE COMMUNITY SERVICES, INC."
+						},
+						{
+							"key": "_revinclude",
+							"value": "OrganizationAffiliation:participating-organization",
+							"description": "The organization that provides services to the primary organization"
+						},
+						{
+							"key": "_revinclude",
+							"value": "Endpoint:organization"
+						},
+						{
+							"key": "_revinclude",
+							"value": "HealthcareService:organization"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 5a: Request Organization data for a specific Provider",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b0f639ca-80a4-489a-b085-d952c32c54c1",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"// print out the step count to the console",
+							"if (responseCode.code === 200){",
+							"    ",
+							"        try{",
+							"            var dr_data = JSON.parse(responseBody);",
+							"            var data_entry = dr_data.entry;",
+							"            var data_entry_len = data_entry.length;",
+							"            var orgs = [];",
+							"            var org_id = [];",
+							"            var hcs = [];",
+							"            var oa = [];",
+							"            var pr = [];",
+							"            var org_id = [];",
+							"            for (i = 0; i < data_entry_len; i++){",
+							"                tests[\"Resource[\" + i + \"]:\" + data_entry[i].resource.resourceType] = true;",
+							"                if (data_entry[i].resource.resourceType == \"Practitioner\"){",
+							"                    var p_name  = data_entry[i].resource.name[0].given.join(' ') + \" \" + data_entry[i].resource.name[0].family;",
+							"                    tests[\"Practitioner:\" + p_name] = true;",
+							"                }",
+							"",
+							"                else if (data_entry[i].resource.resourceType == \"PractitionerRole\"){",
+							"                   tests[\"PractitionerRole:\" + data_entry[i].resource.practitioner.display] = true;",
+							"                   //tests[\"==organization==> \" + data_entry[i].resource.organization.reference] = true;",
+							"                   pr.push(data_entry[i].resource.practitioner.display ); ",
+							"",
+							"                   //org_id.push(data_entry[i].resource.organization.reference.slice(13,));",
+							"                   //        org_id.push(data_entry[i].resource.participatingOrganization.reference.slice(13,));// slice off ",
+							"                }",
+							"",
+							"                else if (data_entry[i].resource.resourceType == \"Organization\"){",
+							"                    tests[\"Organization:\" + data_entry[i].resource.name] = true;",
+							"                    //orgs.push (\"Organization: \" + data_entry[i].resource.name )",
+							"                }",
+							"                else if (data_entry[i].resource.resourceType == \"Location\"){",
+							"                    var l_name  = \"Location: \" + data_entry[i].resource.description; ",
+							"                    tests[\"Location:\" + l_name] = true;",
+							"                }",
+							"                else if (data_entry[i].resource.resourceType == \"HealthcareService\"){",
+							"                    hcs.push(\"HealthcareService: \" + data_entry[i].resource.name);",
+							"                    tests[\"HealthcareService: \" + data_entry[i].resource.name] = true;",
+							"                }",
+							"                else if (data_entry[i].resource.resourceType == \"OrganizationAffiliation\"){",
+							"                    oa.push(data_entry[i].resource.organization.display + \": \" + data_entry[i].resource.participatingOrganization.display);",
+							"                    org_id.push(data_entry[i].resource.id);",
+							"                    tests[ org_id.length + \" OrganizationAffiliation ids:\" + org_id.join(\", \")] = true;",
+							"                    tests[\"OrganizationAffiliation: \" + data_entry[i].resource.organization.display + \": \" + data_entry[i].resource.participatingOrganization.display ] = true;",
+							"                    ",
+							"                }",
+							"            }",
+							"               ",
+							"            tests[\"PractitionerRole:\" + pr.join(\", \")] = true;",
+							"            tests[\"Organization:\" + orgs.join(\", \")] = true;",
+							"            tests[\"HealthcareServices:\" + hcs.join(\", \")] = true;",
+							"            tests[ dr_data.total + \" OrganizationAffiliations:\" + oa.join(\", \")] = true;",
+							"            tests[ org_id.length + \" OrganizationAffiliation ids:\" + org_id.join(\", \")] = true;",
+							"",
+							"            pm.environment.set(\"pract_assoc_orgs\", org_id.join(\", \"));      ",
+							"",
+							"        }",
+							"        catch(e){",
+							"            console.log(e);",
+							"            }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"description": "FHIR xml",
+						"key": "Accept",
+						"type": "text",
+						"value": "application/fhir+xml",
+						"disabled": true
+					},
+					{
+						"description": "FHIR xml",
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/fhir+xml",
+						"disabled": true
+					},
+					{
+						"description": "FHIR json",
+						"key": "Accept",
+						"type": "text",
+						"value": "application/fhir+json"
+					},
+					{
+						"description": "FHIR json",
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/fhir+json"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/Practitioner?identifier=1230782571&_revinclude=PractitionerRole:practitioner&_include=PractitionerRole:organization",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Practitioner"
+					],
+					"query": [
+						{
+							"key": "identifier",
+							"value": "1230782571"
+						},
+						{
+							"key": "_revinclude",
+							"value": "PractitionerRole:practitioner",
+							"description": "Practitioner that is able to provide the defined services for the organization"
+						},
+						{
+							"key": "_include",
+							"value": "PractitionerRole:organization"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 5b: Request Locations, HealthcareServices, and Endpoints for Provider Organization",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b0f639ca-80a4-489a-b085-d952c32c54c1",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"// print out the step count to the console",
+							"if (responseCode.code === 200){",
+							"    ",
+							"        try{",
+							"            var dr_data = JSON.parse(responseBody);",
+							"            var data_entry = dr_data.entry;",
+							"            var data_entry_len = data_entry.length;",
+							"            var hcs = [];",
+							"            var org = [];",
+							"            var org_id = [];",
+							"            var loc = [];",
+							"            for (i = 0; i < data_entry_len; i++){",
+							"                if (data_entry[i].resource.resourceType == \"Organization\"){",
+							"                   org.push(data_entry[i].resource.name + \"/\" +  data_entry[i].resource.endpoint[0].display +  \" = \" +  data_entry[i].resource.endpoint[0].reference );",
+							"                }",
+							"                else if (data_entry[i].resource.resourceType == \"Location\"){",
+							"                    loc.push(data_entry[i].resource.description); ",
+							"                }",
+							"                else if (data_entry[i].resource.resourceType == \"HealthcareService\"){",
+							"                    hcs.push(\"HealthcareService: \" + data_entry[i].resource.name);",
+							"                }",
+							"                else if (data_entry[i].resource.resourceType == \"OrganizationAffiliation\"){",
+							"                    oa.push(data_entry[i].resource.organization.display + \": \" + data_entry[i].resource.participatingOrganization.display);",
+							"                    org_id.push(data_entry[i].resource.id)",
+							"                }",
+							"                }",
+							"               ",
+							"            //tests[\"Organization:\" + o_name] = true;",
+							"            ///tests[\"Location:\" + l_name] = true;",
+							"            //tests[\"HealthcareServices:\" + hcs.toString()] = true;",
+							"            tests[ dr_data.total + \" Organizations:\" + org.toString()] = true;",
+							"            tests[ \"Locations:\" + loc.toString()] = true;",
+							"            tests[\"HealthcareServices:  \" + hcs.toString()] = true;",
+							"",
+							"          ",
+							"",
+							"        }",
+							"        catch(e){",
+							"            console.log(e);",
+							"            }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"description": "FHIR xml",
+						"key": "Accept",
+						"type": "text",
+						"value": "application/fhir+xml",
+						"disabled": true
+					},
+					{
+						"description": "FHIR xml",
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/fhir+xml",
+						"disabled": true
+					},
+					{
+						"description": "FHIR json",
+						"key": "Accept",
+						"type": "text",
+						"value": "application/fhir+json"
+					},
+					{
+						"description": "FHIR json",
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/fhir+json"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/Organization?_id={{pract_assoc_orgs}}&_revinclude=Location:organization&_revinclude=HealthcareService:organization&_revinclude=Endpoint:organization",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Organization"
+					],
+					"query": [
+						{
+							"key": "_id",
+							"value": "{{pract_assoc_orgs}}"
+						},
+						{
+							"key": "_revinclude",
+							"value": "Location:organization"
+						},
+						{
+							"key": "_revinclude",
+							"value": "HealthcareService:organization"
+						},
+						{
+							"key": "_revinclude",
+							"value": "Endpoint:organization"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 6a: Identify Organization and Practitioner data associated with a Network",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b0f639ca-80a4-489a-b085-d952c32c54c1",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"// print out the step count to the console",
+							"if (responseCode.code === 200){",
+							"    ",
+							"        try{",
+							"            var dr_data = JSON.parse(responseBody);",
+							"            var data_entry = dr_data.entry;",
+							"            var data_entry_len = data_entry.length;",
+							"            var hcs = [];",
+							"            var oa = [];",
+							"            var pract = [];",
+							"            var pract_id = [];",
+							"            var org = [];",
+							"            var org_id = [];",
+							"",
+							"            for (i = 0; i < data_entry_len; i++){",
+							"                if (data_entry[i].resource.resourceType == \"Organization\"){",
+							"                   var o_name  = \"Organization: \" + data_entry[i].resource.name; ",
+							"                }",
+							"                else if (data_entry[i].resource.resourceType == \"Location\"){",
+							"                    var l_name  = \"Location: \" + data_entry[i].resource.description; ",
+							"                }",
+							"                else if (data_entry[i].resource.resourceType == \"HealthcareService\"){",
+							"                    hcs.push(\"HealthcareService: \" + data_entry[i].resource.name);",
+							"                }",
+							"                else if (data_entry[i].resource.resourceType == \"OrganizationAffiliation\"){",
+							"                    org.push(data_entry[i].resource.participatingOrganization.display);",
+							"                    org_id.push(data_entry[i].resource.participatingOrganization.reference.slice(13,));",
+							"                }",
+							"                if (data_entry[i].resource.resourceType == \"PractitionerRole\"){",
+							"                    pract.push(data_entry[i].resource.practitioner.display)",
+							"                    pract_id.push(data_entry[i].resource.practitioner.reference);// slice off Type",
+							"",
+							"                }",
+							"",
+							"                }",
+							"               ",
+							"            tests[\"Organization:\" + o_name] = true;",
+							"            ///tests[\"Location:\" + l_name] = true;",
+							"            //tests[\"HealthcareServices:\" + hcs.toString()] = true;",
+							"            tests[org.length + \" Provider Organization Network Member ids:\" + org.toString()] = true;",
+							"            tests[org_id.length + \" Provider Organization Network Member ids:\" + org_id.toString()] = true;",
+							"            tests[ pract.length + \" Practioner:\" + pract.toString()] = true;",
+							"            tests[\"Individual Provider Network Member ids:\" + pract_id.toString()] = true;",
+							"            ",
+							"            ",
+							"            //set variables for the next query",
+							"            ",
+							"            pm.environment.set(\"network_org_members\",org_id.toString());",
+							"            pm.environment.set(\"network_pract_members\",pract_id.slice(0,25).toString());",
+							"",
+							"        }",
+							"        catch(e){",
+							"            console.log(e);",
+							"            }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"description": "FHIR xml",
+						"key": "Accept",
+						"type": "text",
+						"value": "application/fhir+xml",
+						"disabled": true
+					},
+					{
+						"description": "FHIR xml",
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/fhir+xml",
+						"disabled": true
+					},
+					{
+						"description": "FHIR json",
+						"key": "Accept",
+						"type": "text",
+						"value": "application/fhir+json"
+					},
+					{
+						"description": "FHIR json",
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/fhir+json"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/Organization?name=State of Massachusetts Preferred Provider Network&_revinclude=OrganizationAffiliation:network&_revinclude=PractitionerRole:network",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Organization"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "State of Massachusetts Preferred Provider Network"
+						},
+						{
+							"key": "_revinclude",
+							"value": "OrganizationAffiliation:network",
+							"description": "The organization that provides services to the primary organization"
+						},
+						{
+							"key": "_revinclude",
+							"value": "PractitionerRole:network",
+							"description": "Organization where the role is available"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 6b: Identify location and healthcare services data associated with an Organizational Provider Network Member",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b0f639ca-80a4-489a-b085-d952c32c54c1",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"// print out the step count to the console",
+							"if (responseCode.code === 200){",
+							"    ",
+							"        try{",
+							"            var dr_data = JSON.parse(responseBody);",
+							"            var data_entry = dr_data.entry;",
+							"            var data_entry_len = data_entry.length;",
+							"            var hcs = [];",
+							"            var oa = [];",
+							"            org = [];",
+							"            var org_id = [];",
+							"            pr = [];",
+							"            pract_id = [];",
+							"",
+							"            for (i = 0; i < data_entry_len; i++){",
+							"                if (data_entry[i].resource.resourceType == \"Organization\"){",
+							"                    var o_name  = data_entry[i].resource.name;",
+							"                    var org_id = data_entry[i].resource.id;",
+							"                    for (j = 0; j < data_entry_len; j++){",
+							"                           if (data_entry[j].resource.resourceType == \"Location\" && data_entry[j].resource.managingOrganization.reference == \"Organization/\" + org_id){",
+							"                            var l_name  = data_entry[j].resource.description; ",
+							"                             }  else if (data_entry[j].resource.resourceType == \"HealthcareService\" && data_entry[j].resource.providedBy.reference == \"Organization/\" + org_id) {",
+							"                             hcs.push(data_entry[j].resource.name); ",
+							"                            }     ",
+							"                    }",
+							"                    tests[i+1 + \") Organization:\" + o_name  + \"  /  Location:\" + l_name + \"  /  HealthcareServices:\" + hcs.toString()] = true;",
+							"                    hcs = [];",
+							"",
+							"                }",
+							"",
+							"        }",
+							"",
+							"        }",
+							"        ",
+							"        catch(e){",
+							"            console.log(e);",
+							"            }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"description": "FHIR xml",
+						"key": "Accept",
+						"type": "text",
+						"value": "application/fhir+xml",
+						"disabled": true
+					},
+					{
+						"description": "FHIR xml",
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/fhir+xml",
+						"disabled": true
+					},
+					{
+						"description": "FHIR json",
+						"key": "Accept",
+						"type": "text",
+						"value": "application/fhir+json"
+					},
+					{
+						"description": "FHIR json",
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/fhir+json"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/Organization?_id={{network_org_members}}&_revinclude=Location:organization&_revinclude=HealthcareService:organization",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Organization"
+					],
+					"query": [
+						{
+							"key": "_id",
+							"value": "{{network_org_members}}",
+							"description": "primaries from query 6a"
+						},
+						{
+							"key": "_revinclude",
+							"value": "Location:organization"
+						},
+						{
+							"key": "_revinclude",
+							"value": "HealthcareService:organization"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 7a: Identify HealthcareServices in a state",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/HealthcareService?location.address-state=RI&_include=HealthcareService:organization",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"HealthcareService"
+					],
+					"query": [
+						{
+							"key": "location.address-state",
+							"value": "RI"
+						},
+						{
+							"key": "_include",
+							"value": "HealthcareService:organization"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 7b: Identify HealthcareServices in a city",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/HealthcareService?location.address-state=RI&location.address-city=Providence&_include=HealthcareService:organization",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"HealthcareService"
+					],
+					"query": [
+						{
+							"key": "location.address-state",
+							"value": "RI"
+						},
+						{
+							"key": "location.address-city",
+							"value": "Providence"
+						},
+						{
+							"key": "_include",
+							"value": "HealthcareService:organization"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 7c: Identify particular types of HealthcareServices in a state",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/HealthcareService?service-type=respiratory-therapy&location.address-state=RI&_include=HealthcareService:organization",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"HealthcareService"
+					],
+					"query": [
+						{
+							"key": "service-type",
+							"value": "respiratory-therapy"
+						},
+						{
+							"key": "location.address-state",
+							"value": "RI"
+						},
+						{
+							"key": "_include",
+							"value": "HealthcareService:organization"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 7d: Identify particular types of HealthcareServices in an area",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/HealthcareService?service-type=respiratory-therapy&location.near=42.71208|-71.15223|20|mi",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"HealthcareService"
+					],
+					"query": [
+						{
+							"key": "service-type",
+							"value": "respiratory-therapy"
+						},
+						{
+							"key": "location.near",
+							"value": "42.71208|-71.15223|20|mi"
+						},
+						{
+							"key": "",
+							"value": "42.712082, -71.15223",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 8: Find Practitioners whose license will expire by 12/14/2019",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/Practitioner?qualification-period=eb2019-12-14",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Practitioner"
+					],
+					"query": [
+						{
+							"key": "qualification-period",
+							"value": "eb2019-12-14"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 9a: Identify Organizations in a Network",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/OrganizationAffiliation?network=plannet-network-HPID110000&_include=OrganizationAffiliation:participating-organization",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"OrganizationAffiliation"
+					],
+					"query": [
+						{
+							"key": "network",
+							"value": "plannet-network-HPID110000"
+						},
+						{
+							"key": "_include",
+							"value": "OrganizationAffiliation:participating-organization"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 9b: Identify Practitioners in a Network",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/PractitionerRole?network=plannet-network-HPID110000&_include=PractitionerRole:practitioner",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"PractitionerRole"
+					],
+					"query": [
+						{
+							"key": "network",
+							"value": "plannet-network-HPID110000"
+						},
+						{
+							"key": "_include",
+							"value": "PractitionerRole:practitioner"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Scenario 10a: Identify Pharmacies within a network near a location",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				},
+				"description": "This is the query used by the client reference implementation."
+			},
+			"response": []
+		},
+		{
+			"name": "10b: Find a Practitioners within a network near a location",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/PractitionerRole?network=plannet-network-HPID020000&location.near=42.506362|-71.20008|5|mi&practitioner.qualification-code=207N00000X",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"PractitionerRole"
+					],
+					"query": [
+						{
+							"key": "_include",
+							"value": "PractitionerRole:practitioner",
+							"disabled": true
+						},
+						{
+							"key": "_include",
+							"value": "PractitionerRole:location",
+							"disabled": true
+						},
+						{
+							"key": "network",
+							"value": "plannet-network-HPID020000"
+						},
+						{
+							"key": "location.near",
+							"value": "42.506362|-71.20008|5|mi"
+						},
+						{
+							"key": "practitioner.qualification-code",
+							"value": "207N00000X"
+						}
+					]
+				},
+				"description": "This is the query used by the client Reference Implementation for pharmacy search."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "19f541d5-4a7e-45dd-8d15-f02923494590",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "f8fd9fed-ad77-45d9-82d3-c7b319754b6f",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "6e02a1f2-809d-45f2-bf5d-3aa8c3287f8a",
+			"key": "url",
+			"value": "https://davinci-plan-net-ri.logicahealth.org/fhir",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
